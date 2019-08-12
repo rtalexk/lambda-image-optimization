@@ -1,22 +1,22 @@
-const gm = require('gm').subClass({ imageMagick: true });
-const AWS = require('aws-sdk');
+const S3 = require('./libs/s3');
+const Optimizer = require('./libs/optimize');
+const Utils = require('./libs/utils');
 
-const s3 = new AWS.S3();
+// Quality from 0 to 100
+const QUALITY = 60;
 
-exports.handler = async (event, context, cb) => {
+// Where images are uploaded
+const ORIGIN = 'original/';
+
+// Where optimized images will be saved
+const DESTINATION = 'thumbs/';
+
+exports.handler = async (event, ctx, cb) => {
   const validExtensions = ['jpg', 'jpeg', 'png'];
 
   const { bucket, object } = event.Records[0].s3;
 
-  // Where images are uploaded
-  const origin = 'original/';
-
-  // Where optimized images will be saved
-  const dest = 'thumbs/';
-
-  // Object key may have spaces or unicode non-ASCII characters. Remove prefix
-  const fullFileName = decodeURIComponent(object.key.replace(/\+/g, ' '))
-    .split('/').pop();
+  const fullFileName = Utils.getFileName(object.key);
 
   const [fileName, fileExt] = fullFileName.split('.');
 
@@ -25,49 +25,16 @@ exports.handler = async (event, context, cb) => {
   }
 
   // Download image from S3
-  const s3Image = await s3.
-    getObject({
-      Bucket: bucket.name,
-      Key: `${origin}${fullFileName}`
-    })
-    .promise();
-
-  function gmToBuffer(data) {
-    return new Promise((resolve, reject) => {
-      data.stream((err, stdout, stderr) => {
-        if (err) { return reject(err) }
-        const chunks = []
-        stdout.on('data', (chunk) => { chunks.push(chunk) })
-        stdout.once('end', () => { resolve(Buffer.concat(chunks)) })
-        stderr.once('data', (data) => { reject(String(data)) })
-      })
-    })
-  }
-
-  function getBuffer(body, size, quality) {
-    const data = gm(body)
-      .resize(size)
-      .quality(quality);
-
-    return gmToBuffer(data);
-  }
+  const s3Image = await S3.download(bucket.name, `${ORIGIN}${fullFileName}`);
 
   // use null to optimize image without resizing
   const sizes = [null, 1200, 640, 420];
 
-  // Uploades all images to S3
+  // Uploades optimized images to S3
   const uploadPromises = sizes.map(async size => {
-    // Optimize image with current size
-    const imgBuffer = await getBuffer(s3Image.Body, size, 60);
-    const key = size
-      ? `${dest}${fileName}_thumb_${size}.${fileExt}`
-      : `${dest}${fileName}_original.${fileExt}`;
-
-    return s3.putObject({
-      Bucket: bucket.name,
-      Key: key,
-      Body: imgBuffer,
-    }).promise();
+    const optimizedImage = await Optimizer.optimize(s3Image.Body, s3Image.ContentType, size, QUALITY);
+    const objectKey = Utils.genKey(DESTINATION, fileName, size, fileExt);
+    return S3.upload(bucket.name, objectKey, optimizedImage);
   });
 
   await Promise.all(uploadPromises);
@@ -75,6 +42,7 @@ exports.handler = async (event, context, cb) => {
   cb(null, 'finished');
 };
 
+// Execute function if running in local
 if (process.env.LOCAL === 'true') {
   exports.handler(require('./event.json'), null, (err, res) => {
     console.log(res);
