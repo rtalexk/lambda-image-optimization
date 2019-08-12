@@ -6,7 +6,7 @@ const Halpert = require('jimp');
  * @param { string } mime Mimetype of image (ex. image/jpeg)
  * @param { number } size Width of new image. null to keep original size
  * @param { number } quality 0-100 quality
- * @returns { Primise<Buffer> } Optimized image
+ * @returns { Promise<Buffer> } Optimized image
  */
 exports.optimize = async function optimize(buffer, mime, size, quality) {
   const data = await Halpert.read(buffer)
