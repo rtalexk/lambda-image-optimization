@@ -1,0 +1,22 @@
+{
+  "name": "image_optimization",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "zip -r code.zip *",
+    "dev": "sam local invoke -e ./event.json -t ../template.yaml",
+    "local": "LOCAL=true node index.js"
+  },
+  "keywords": [],
+  "author": "Alejandro Rivera <rtalexk@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.505.0"
+  },
+  "dependencies": {
+    "gm": "^1.23.1",
+    "sharp": "^0.23.0"
+  }
+}

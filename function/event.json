@@ -1,0 +1,38 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-east-1",
+      "eventTime": "2019-08-07T20:02:00.791Z",
+      "eventName": "ObjectCreated:Put",
+      "userIdentity": {
+        "principalId": "AWS:SOMEID"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "192.168.0.1"
+      },
+      "responseElements": {
+        "x-amz-request-id": "REQUESTID",
+        "x-amz-id-2": "AMAZONID2="
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "a34d5c09-019b-4a6a-ba09-2fca03412e81",
+        "bucket": {
+          "name": "rtalexk-gallery",
+          "ownerIdentity": {
+            "principalId": "SOMEID"
+          },
+          "arn": "arn:aws:s3:::rtalexk-gallery"
+        },
+        "object": {
+          "key": "original/cat.jpg",
+          "size": 3513370,
+          "eTag": "TAGID",
+          "sequencer": "SEQUENCERID"
+        }
+      }
+    }
+  ]
+}
