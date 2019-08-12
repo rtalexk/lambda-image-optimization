@@ -44,7 +44,7 @@ exports.handler = async (event, ctx, cb) => {
 
 // Execute function if running in local
 if (process.env.LOCAL === 'true') {
-  exports.handler(require('./event.json'), null, (err, res) => {
+  exports.handler(require('./dev/event.json'), null, (err, res) => {
     console.log(res);
   });
 }
