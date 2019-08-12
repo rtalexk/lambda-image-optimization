@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "pack": "zip -r code.zip *",
-    "dev": "sam local invoke -e ./event.json -t ../template.yaml",
+    "dev": "sam local invoke -e ./dev/event.json -t ../template.yaml",
     "local": "LOCAL=true node index.js"
   },
   "keywords": [],
