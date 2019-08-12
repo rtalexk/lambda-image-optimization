@@ -1,4 +1,4 @@
-const gm = require('gm').subClass({ imageMagick: false });
+const gm = require('gm').subClass({ imageMagick: true });
 const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3();
