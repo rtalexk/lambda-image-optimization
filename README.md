@@ -17,6 +17,7 @@ This Lambda function uses a pure Javascript image optimizaction ([Jimp](https://
 S3 Bucket structure will be the following:
 
 * prefix-gallery
+* &nbsp;├─── /code.zip
 * &nbsp;├─── /original
 * &nbsp;├────┼─── /image.jpg
 * &nbsp;├─── /thumbs
@@ -36,6 +37,16 @@ S3 Bucket structure will be the following:
 ## prerequisites
 
 This tutorial asumes you have an AWS account and you've configured AWS credentials for CLI, if you haven't [please do so](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#post-install-configure).
+
+To follow the procedures in this tutorial you'll need a command line terminal to run commands. Commands are shown as below:
+
+```
+(bash) $ command
+----------------
+output
+```
+
+`(bash) $ ` is a constant indicating that is a command running in bash. Everything below `--------------` is the output of the command, or if the command is two or more lines, it will have its own section denoted by **Output:** header.
 
 ## S3
 
