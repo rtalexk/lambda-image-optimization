@@ -8,7 +8,8 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 60
+    MemorySize: 512
 
 Resources:
   ResizeImageFunction:
@@ -17,7 +18,6 @@ Resources:
       CodeUri: function/
       Handler: index.handler
       Runtime: nodejs10.x
-      Timeout: 20
       Events:
         S3ObjectCreated:
           Type: S3 # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
