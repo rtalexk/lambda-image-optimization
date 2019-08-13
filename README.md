@@ -6,20 +6,24 @@ What you will learn at the end of this tutorial is how to execute a Lambda Funct
 
 If you want to learn why you should care about image optimizations I encourage you to visit [web.dev](web.dev), especially [Fast load times](https://web.dev/fast).
 
+## Notice
+
+This Lambda function uses a pure Javascript image optimizaction ([Jimp](https://www.npmjs.com/package/jimp)). For a better performant solution consider using Imagemin or GraphicsMagic.
+
 ## Architecture
 
 ![Architecture overview](/assets/architecture_overview.jpg)
 
 S3 Bucket structure will be the following:
 
-\- prefix-gallery
-&nbsp;&nbsp;&nbsp;|--- /original &#13; &#10;
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image.jpg &#13; &#10;
-&nbsp;&nbsp;&nbsp;|--- /thumbs &#13; &#10;
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_original.jpg &#13; &#10;
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_1200.jpg &#13; &#10;
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_640.jpg &#13; &#10;
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_420.jpg &#13; &#10;
+* prefix-gallery
+* &nbsp;├─── /original
+* &nbsp;├────┼─── /image.jpg
+* &nbsp;├─── /thumbs
+* &nbsp;├────┼─── /image_original.jpg
+* &nbsp;├────┼─── /image_thumb_1200.jpg
+* &nbsp;├────┼─── /image_thumb_640.jpg
+* &nbsp;└────┴─── /image_thumb_420.jpg
 
 ### Workflow
 
@@ -29,6 +33,10 @@ S3 Bucket structure will be the following:
 4. Lambda Function resize and compress image to generate 4 new images.
 5. Lambda Function upload optimized images to `/thumbs` folder.
 
+## prerequisites
+
+This tutorial asumes you have an AWS account and you've configured AWS credentials for CLI, if you haven't [please do so](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html#post-install-configure).
+
 ## S3
 
 Let's create an S3 bucket. You can do this though the console or using the AWS CLI. named it `{prefix}-gallery`. Replace prefix with a unique identifier so that S3 name is [globally unique](https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html). I'll use `rtalexk-gallery`, as my username.
@@ -37,14 +45,16 @@ Let's create an S3 bucket. You can do this though the console or using the AWS C
 
 ```bash
 (bash)$ aws s3 mb s3://rtalexk-gallery
-output: make_bucket: rtalexk-gallery
+----------------
+make_bucket: rtalexk-gallery
 ```
 
 You can list your buckets to make sure it was created successfuly:
 
 ```bash
 (bash)$ aws s3 ls
-output: 2019-08-13 10:53:34 rtalexk-gallery
+----------------
+2019-08-13 10:53:34 rtalexk-gallery
 ```
 
 ## Execution role
@@ -83,25 +93,25 @@ And now we can create the role:
 Output:
 ```json
 {
-    "Role": {
-        "AssumeRolePolicyDocument": {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Action": "sts:AssumeRole",
-                    "Effect": "Allow",
-                    "Principal": {
-                        "Service": "lambda.amazonaws.com"
-                    }
-                }
-            ]
-        },
-        "RoleId": "AROAWLOEJBDOVF57FGKGJ",
-        "CreateDate": "2019-08-13T16:44:30Z",
-        "RoleName": "role-lambda-s3",
-        "Path": "/",
-        "Arn": "arn:aws:iam::123456789123:role/role-lambda-s3"
-    }
+  "Role": {
+    "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Action": "sts:AssumeRole",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "lambda.amazonaws.com"
+          }
+        }
+      ]
+    },
+    "RoleId": "AROAWLOEJBDOVF57FGKGJ",
+    "CreateDate": "2019-08-13T16:44:30Z",
+    "RoleName": "role-lambda-s3",
+    "Path": "/",
+    "Arn": "arn:aws:iam::123456789123:role/role-lambda-s3"
+  }
 }
 ```
 
@@ -121,12 +131,12 @@ Output:
 
 ```json
 {
-    "AttachedPolicies": [
-        {
-            "PolicyName": "AWSLambdaExecute",
-            "PolicyArn": "arn:aws:iam::aws:policy/AWSLambdaExecute"
-        }
-    ]
+  "AttachedPolicies": [
+    {
+      "PolicyName": "AWSLambdaExecute",
+      "PolicyArn": "arn:aws:iam::aws:policy/AWSLambdaExecute"
+    }
+  ]
 }
 ```
 
@@ -144,7 +154,8 @@ This command will install dependencies for the function and generate a zip file.
 
 ```bash
 (bash) $ aws s3 cp code.zip s3://rtalexk-gallery/code.zip
-output: upload: ./code.zip to s3://rtalexk-gallery/code.zip
+----------------
+upload: ./code.zip to s3://rtalexk-gallery/code.zip
 ```
 
 Now we can create the function and reference the code from S3:
@@ -169,22 +180,22 @@ Output:
 
 ```json
 {
-    "TracingConfig": {
-        "Mode": "PassThrough"
-    },
-    "CodeSha256": "jz9MRd5XnUBqMdqncN7d7Fxg+edH2ctkqPbMFTteNmU=",
-    "FunctionName": "imageProcessing",
-    "CodeSize": 49657600,
-    "RevisionId": "293ca655-251f-4400-a13b-fc2241c5ea23",
-    "MemorySize": 512,
-    "FunctionArn": "arn:aws:lambda:us-east-1:123456789123:function:imageProcessing",
-    "Version": "$LATEST",
-    "Role": "arn:aws:iam::123456789123:role/role-lambda-s3",
-    "Timeout": 60,
-    "LastModified": "2019-08-13T17:10:23.926+0000",
-    "Handler": "index.handler",
-    "Runtime": "nodejs10.x",
-    "Description": ""
+  "TracingConfig": {
+    "Mode": "PassThrough"
+  },
+  "CodeSha256": "jz9MRd5XnUBqMdqncN7d7Fxg+edH2ctkqPbMFTteNmU=",
+  "FunctionName": "imageProcessing",
+  "CodeSize": 49657600,
+  "RevisionId": "293ca655-251f-4400-a13b-fc2241c5ea23",
+  "MemorySize": 512,
+  "FunctionArn": "arn:aws:lambda:us-east-1:123456789123:function:imageProcessing",
+  "Version": "$LATEST",
+  "Role": "arn:aws:iam::123456789123:role/role-lambda-s3",
+  "Timeout": 60,
+  "LastModified": "2019-08-13T17:10:23.926+0000",
+  "Handler": "index.handler",
+  "Runtime": "nodejs10.x",
+  "Description": ""
 }
 ```
 
@@ -194,6 +205,177 @@ This step is easier within the Console. From the Lambda console, select `Add tri
 
 To achieve this, we'll require to perform two actions:
 
-1) Add permissions to the Lambda Function to be executed by S3,
+1) Add permissions to the Lambda Function to be executed by S3, and
 2) Add notification configuration to the S3 bucket so that when an object is created, it performs an action, which is the function execution.
 
+**To add permissions to the function policy**
+
+1. Run the following Lambda CLI add-permission command to grant Amazon S3 service principal (s3.amazonaws.com) permissions to perform the lambda:InvokeFunction action. Note that permission is granted to Amazon S3 to invoke the function only if the following conditions are met:
+
+    * An object-created event is detected on a specific bucket.
+    * The bucket is owned by a specific AWS account. If a bucket owner deletes a bucket, some other AWS account can create a bucket with the same name. This condition ensures that only a specific AWS account can invoke your Lambda function.
+
+```bash
+(bash) $ aws lambda add-permission --function-name imageProcessing --principal s3.amazonaws.com \
+       --statement-id S3Execution --action "lambda:InvokeFunction" \
+       --source-arn arn:aws:s3:::rtalexk-gallery --source-account 123456789123
+```
+
+Output:
+```json
+{
+  "Statement": {
+    "Sid": "S3Execution",
+    "Effect": "Allow",
+    "Principal": {
+      "Service": "s3.amazonaws.com"
+    },
+    "Action": "lambda:InvokeFunction",
+    "Resource": "arn:aws:lambda:us-east-1:436887685341:function:imageProcessing",
+    "Condition": {
+      "StringEquals": {
+        "AWS:SourceAccount": "436887685341"
+      },
+      "ArnLike": {
+        "AWS:SourceArn": "arn:aws:s3:::rtalexk-gallery"
+      }
+    }
+  }
+}
+```
+
+2. Verify the function's access policy by running the AWS CLI get-policy command:
+
+```bash
+(bash) $ aws lambda get-policy --function-name imageProcessing
+```
+
+Output:
+```json
+{
+  "Policy": {
+    "Version": "2012-10-17",
+    "Id": "default",
+    "Statement": [
+      {
+        "Sid": "S3Execution",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "s3.amazonaws.com"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Resource": "arn:aws:lambda:us-east-1:436887685341:function:imageProcessing",
+        "Condition": {
+          "StringEquals": {
+            "AWS:SourceAccount": "436887685341"
+          },
+          "ArnLike": {
+            "AWS:SourceArn": "arn:aws:s3:::rtalexk-gallery"
+          }
+        }
+      }
+    ]
+  },
+  "RevisionId": "0bd4c17d-4fc2-4395-93b1-09b23f4d792a"
+}
+```
+
+**To configure S3 notifications**
+
+1. Create a `JSON` file contaning the following configuration (I'll use vim):
+
+```bash
+(bash) $ vim s3_notifications.json
+```
+
+```json
+{
+  "LambdaFunctionConfigurations": [
+    {
+      "Id": "ObjectCreated",
+      "LambdaFunctionArn": "arn:aws:lambda:us-east-1:436887685341:function:imageProcessing",
+      "Events": [ "s3:ObjectCreated:*" ],
+      "Filter": {
+        "Key": {
+          "FilterRules": [
+            {
+              "Name": "prefix",
+              "Value": "original/"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+2. Use `s3api` command to create the notification:
+
+```bash
+(bash) $ aws s3api put-bucket-notification-configuration --bucket rtalexk-gallery --notification-configuration file://s3_notifications.json
+```
+
+3. Use `s3api` command to verify the notification configuration:
+
+```bash
+(bash) $ aws s3api get-bucket-notification-configuration --bucket rtalexk-gallery
+```
+
+Output:
+
+```json
+{
+  "LambdaFunctionConfigurations": [
+    {
+      "Filter": {
+        "Key": {
+          "FilterRules": [
+            {
+              "Name": "Prefix",
+              "Value": "original/"
+            }
+          ]
+        }
+      },
+      "LambdaFunctionArn": "arn:aws:lambda:us-east-1:436887685341:function:imageProcessing",
+      "Id": "ObjectCreated",
+      "Events": [
+        "s3:ObjectCreated:*"
+      ]
+    }
+  ]
+}
+```
+
+> Note: Notice that in the S3 section, where whe created the bucket, we used the `s3` command, and here we used `s3api` command. These commands are different: `s3` is used to manipulate buckets and its content, whilst `s3api` is used to command the S3 service to perform certain actions using its API. Refer to [Leveraging the s3 and s3api Commands](https://aws.amazon.com/blogs/developer/leveraging-the-s3-and-s3api-commands/) for a clearer explanation.
+
+## Testing
+
+Upload either a `png` or a `jpg` image to S3 with the prefix of `original/`, you can use the following command (make sure you have an image in your current directory):
+
+```
+(bash) $ ls -lh cat.jpg
+----------------
+-rw-r--r--@ 1 alejandro rivera  1780047346   244K Aug  8 16:54 cat.jpg
+```
+
+```bash
+(bash) $ aws s3 cp cat.jpg s3://rtalexk-gallery/original/cat.jpg
+----------------
+upload: ./cat.jpg to s3://rtalexk-gallery/original/cat.jpg
+```
+
+Now you can list objects created in the `thumbs` folder:
+
+```bash
+(bash) $ aws s3 ls s3://rtalexk-gallery/thumbs/ --human-readable
+```
+Output:
+
+```
+2019-08-13 16:05:38  170.8 KiB cat_original.jpg
+2019-08-13 16:05:38   60.3 KiB cat_thumb_1200.jpg
+2019-08-13 16:05:38   11.3 KiB cat_thumb_420.jpg
+2019-08-13 16:05:38   21.6 KiB cat_thumb_640.jpg
+```
