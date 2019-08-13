@@ -13,13 +13,13 @@ If you want to learn why you should care about image optimizations I encourage y
 S3 Bucket structure will be the following:
 
 \- prefix-gallery
-&nbsp;&nbsp;&nbsp;|--- /original
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image.jpg
-&nbsp;&nbsp;&nbsp;|--- /thumbs
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_original.jpg
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_1200.jpg
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_640.jpg
-&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_420.jpg
+&nbsp;&nbsp;&nbsp;|--- /original &#13; &#10;
+&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image.jpg &#13; &#10;
+&nbsp;&nbsp;&nbsp;|--- /thumbs &#13; &#10;
+&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_original.jpg &#13; &#10;
+&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_1200.jpg &#13; &#10;
+&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_640.jpg &#13; &#10;
+&nbsp;&nbsp;&nbsp;|---&nbsp;&nbsp;| --- /image_thumb_420.jpg &#13; &#10;
 
 ### Workflow
 
