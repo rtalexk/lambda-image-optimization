@@ -17,5 +17,6 @@ exports.download = function download(Bucket, Key) {
  * @param { Buffer } Body
  */
 exports.upload = function upload(Bucket, Key, Body) {
-  return s3.putObject({ Bucket: Bucket, Key: Key, Body: Body }).promise();
+  return s3.putObject({ Bucket: Bucket, Key: Key, Body: Body })
+    .promise().then(_ => `s3://${Bucket}/${Key}`);
 }
