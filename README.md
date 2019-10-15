@@ -180,7 +180,7 @@ Now we can create the function and reference the code from S3:
 ### Parameter description
 
 * `--function-name`: name of the function.
-* `--runtime` Engine used to execute the code, we are using node.js as programming languaje.
+* `--runtime` Engine used to execute the code, we are using node.js as runtime
 * `--role`: assign a role to the function, it is the previously created role with read/write permissions over S3.
 * `--handler`: file and exported function that Lambda will execute.
 * `--code`: reference to the code stored in S3.
